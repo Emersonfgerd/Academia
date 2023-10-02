@@ -1,4 +1,5 @@
-package Academia;
+package src.Academia;
+
 public class AlunoMembro {
     
 }
