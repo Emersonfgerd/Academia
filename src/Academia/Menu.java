@@ -89,7 +89,7 @@ public class Menu {
                     break;
                 case 8:
                 limparConsole();
-                    AcademiaApp.buscarAlunoPorId();
+                    AcademiaApp.buscarAlunoPorId(conexao);
                     break;
                 case 9:
                 limparConsole();

@@ -398,7 +398,7 @@ public class AcademiaApp { // Declaração da classe AcademiaApp.
 
     //MÉTODO PARA ENCONTRAR UM ALUNO PELO ID
 
-    public static void buscarAlunoPorId() {
+    public static void buscarAlunoPorId(Connection connection) {
         while (true) {
             // Exibe um cabeçalho indicando que a busca pelo aluno por ID está em andamento.
             System.out.println("\nBuscar Aluno por ID:");
@@ -415,14 +415,36 @@ public class AcademiaApp { // Declaração da classe AcademiaApp.
     
             boolean encontrado = false;
     
-            // Itera sobre a lista de alunos para encontrar o aluno com o ID fornecido.
-            for (Aluno aluno : alunos) {
-                if (aluno.getId() == idAluno) {
-                    // Se um aluno com o ID fornecido for encontrado.
+            try {
+                // Prepara uma consulta SQL para buscar o aluno pelo ID.
+                String sql = "SELECT * FROM Aluno WHERE id = ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setInt(1, idAluno);
+    
+                // Executa a consulta SQL e armazena o resultado em um objeto ResultSet.
+                ResultSet resultSet = preparedStatement.executeQuery();
+    
+                if (resultSet.next()) {
+                    // Se um aluno com o ID fornecido for encontrado no banco de dados.
+                    int id = resultSet.getInt("id");
+                    String nome = resultSet.getString("nome");
+                    int idade = resultSet.getInt("idade");
+                    String sexo = resultSet.getString("sexo");
+                    boolean problemaSaude = resultSet.getBoolean("problema_saude");
+                    String tipoPagamento = resultSet.getString("tipo_pagamento");
+                    boolean membro = resultSet.getBoolean("membro");
+    
+                    // Cria um objeto Aluno com os dados do resultado da consulta.
+                    Aluno aluno = new Aluno(id, nome, idade, problemaSaude, sexo, tipoPagamento);
+                    aluno.setMembro(membro);
+    
+                    // Exibe as informações do aluno encontrado.
                     System.out.println("Aluno encontrado: " + aluno);
+    
                     encontrado = true;
-                    break; // Sai do loop, pois o aluno foi encontrado.
                 }
+            } catch (SQLException e) {
+                System.out.println("Erro ao buscar aluno no banco de dados: " + e.getMessage());
             }
     
             if (!encontrado) {
@@ -438,7 +460,6 @@ public class AcademiaApp { // Declaração da classe AcademiaApp.
             }
         }
     }
-    
 
     //MÉTODO PARA CADASTRAR UM INSTRUTOR
 
