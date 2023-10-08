@@ -1,30 +1,29 @@
 package src.Academia;
 
-import java.io.IOException;
-import java.sql.Connection;
 import java.util.Scanner;
 
-import conexao.Conexao;
+import src.AcademiaDAO.AlunoDAO;
+import src.conexao.Conexao;
 
 public class Menu {
-    private static Scanner scanner = new Scanner(System.in);
-    private static Connection conexao; 
-
     public static void main(String[] args) {
-        // Obtendo uma conexão com o banco de dados usando a classe Conexao
-        conexao = Conexao.getConexao();
+        Scanner scanner = new Scanner(System.in);
 
-        int escolha;
         while (true) {
             limparConsole();
-            System.out.println("\nMenu Principal:");
-            System.out.println("1. Menu Aluno");
-            System.out.println("2. Menu Instrutor");
-            System.out.println("3. Sair do Programa");
+            System.out.println("\n   MENU ACADEMIA");
+            System.out.println("-------------------");
+            System.out.println(" 1. Menu Aluno");
+            System.out.println(" 2. Menu Instrutor");
+            System.out.println(" 3. Menu Treino");
+            System.out.println(" 0. Sair");
+            System.out.println("-------------------");
             System.out.print("Escolha uma opção: ");
-            escolha = lerOpcao();
 
-            switch (escolha) {
+            int opcaoPrincipal = scanner.nextInt();
+            scanner.nextLine(); // Limpar o buffer
+
+            switch (opcaoPrincipal) {
                 case 1:
                     menuAluno();
                     break;
@@ -32,157 +31,216 @@ public class Menu {
                     menuInstrutor();
                     break;
                 case 3:
-                    System.out.println("Saindo do programa...");
-                    return;
+                    menuTreino();
+                    break;
+                case 0:
+                    System.out.println("Encerrando o programa.");
+                    scanner.close();
+                    System.exit(0);
+                    break;
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
             }
         }
     }
 
-    private static void menuAluno() {
-        int escolha;
+    public static void menuAluno() {
+        // Cria um objeto Aluno com valores iniciais
+        Aluno aluno = new Aluno("", 0, null, false);
+        // Cria um objeto Treino com valores iniciais e um Scanner para entrada do
+        // usuário
+        Treino treino = new Treino(null, null, 0, null);
+
+        Scanner scanner = new Scanner(System.in);
+
         while (true) {
             limparConsole();
-            System.out.println("\nMenu Aluno:");
+            System.out.println("\n    MENU ALUNO");
+            System.out.println("-----------------------");
             System.out.println("1. Cadastrar Aluno");
             System.out.println("2. Listar Alunos");
             System.out.println("3. Editar Aluno");
             System.out.println("4. Excluir Aluno");
-            System.out.println("5. Tornar Aluno Membro");
-            System.out.println("6. Remover Aluno Membro");
-            System.out.println("7. Listar Alunos Membros");
-            System.out.println("8. Buscar Aluno por ID");
-            System.out.println("9. Obter Treino");
-            System.out.println("10. Voltar ao Menu Principal");
+            System.out.println("5. Buscar Aluno");
+            System.out.println("6. Buscar meu Treino");
+            System.out.println("0. Voltar ao Menu Principal");
+            System.out.println("-----------------------");
             System.out.print("Escolha uma opção: ");
-            escolha = lerOpcao();
 
-            switch (escolha) {
+            int opcaoAluno = scanner.nextInt();
+            scanner.nextLine(); // Limpar o buffer
+
+            switch (opcaoAluno) {
                 case 1:
-                limparConsole();
-                AcademiaApp.cadastrarAluno(conexao); // Passe a conexão como argumento
-                break;
+                    limparConsole();
+                    aluno.cadastrarAluno(Conexao.getConexao());
+                    break;
                 case 2:
-                limparConsole();
-                    AcademiaApp.listarAlunos(conexao);
+                    limparConsole();
+                    AlunoDAO alunoDAO = new AlunoDAO(Conexao.getConexao());
+                    aluno.listarAlunos(alunoDAO);
+
                     break;
                 case 3:
-                limparConsole();
-                AcademiaApp.editarAluno(conexao);
-                break;
+                    limparConsole();
+                    aluno.editarAluno(Conexao.getConexao());
+                    break;
                 case 4:
-                limparConsole();
-                    AcademiaApp.removerAluno(conexao);
+                    limparConsole();
+                    aluno.excluirAluno(Conexao.getConexao());
                     break;
                 case 5:
-                limparConsole();
-                    AcademiaApp.tornarAlunoMembro(conexao);
+                    limparConsole();
+                    aluno.buscarAlunoPorNome(Conexao.getConexao());
                     break;
                 case 6:
-                limparConsole();
-                    AcademiaApp.removerAlunoMembro(conexao);
+                    limparConsole();
+                    treino.buscarTreinoPorNome(Conexao.getConexao());
                     break;
-                case 7:
-                limparConsole();
-                    AcademiaApp.listarAlunosMembros(conexao);
-                    break;
-                case 8:
-                limparConsole();
-                    AcademiaApp.buscarAlunoPorId(conexao);
-                    break;
-                case 9:
-                limparConsole();
-                    AcademiaApp.obterTreino();
-                    break;
-                case 10:
-                limparConsole();
-                    return; // Voltar ao menu principal
+                case 0:
+                    return; // Voltar ao Menu Principal
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
             }
         }
     }
 
-    private static void menuInstrutor() {
-        int escolha;
+    public static void menuInstrutor() {
+        // Cria um objeto Instrutor com valores iniciais vazios
+        Instrutor instrutor = new Instrutor(null, 0, null, null);
+        // Cria um objeto Treino com valores iniciais vazios e um Scanner para entrada
+        Treino treino = new Treino(null, null, 0, null);
+        Scanner scanner = new Scanner(System.in);
+
         while (true) {
             limparConsole();
-            System.out.println("\nMenu Instrutor:");
+            System.out.println("\n    MENU INSTRUTOR");
+            System.out.println("-----------------------");
             System.out.println("1. Cadastrar Instrutor");
             System.out.println("2. Listar Instrutores");
             System.out.println("3. Editar Instrutor");
             System.out.println("4. Excluir Instrutor");
-            System.out.println("5. Buscar Instrutor por ID");
-            System.out.println("6. Voltar ao Menu Principal");
+            System.out.println("5. Buscar Instrutor");
+            System.out.println("6. Cadastrar Treino");
+            System.out.println("7. Listar Treinos");
+            System.out.println("8. Editar Treino");
+            System.out.println("9. Excluir Treino");
+            System.out.println("10. Buscar Treino");
+            System.out.println("0. Voltar ao Menu Principal");
+            System.out.println("-----------------------");
             System.out.print("Escolha uma opção: ");
-            escolha = lerOpcao();
 
-            switch (escolha) {
+            int opcaoInstrutor = scanner.nextInt();
+            scanner.nextLine(); // Limpar o buffer
+
+            switch (opcaoInstrutor) {
                 case 1:
-                limparConsole();
-                    AcademiaApp.cadastrarInstrutor(conexao);
+                    limparConsole();
+                    instrutor.cadastrarInstrutor(Conexao.getConexao());
                     break;
                 case 2:
-                limparConsole();
-                    AcademiaApp.listarInstrutores(conexao);
+                    limparConsole();
+                    instrutor.listarInstrutores(Conexao.getConexao());
                     break;
                 case 3:
-                limparConsole();
-                    AcademiaApp.editarInstrutor(conexao);
+                    limparConsole();
+                    instrutor.editarInstrutor(Conexao.getConexao());
                     break;
                 case 4:
-                limparConsole();
-                    AcademiaApp.excluirInstrutor(conexao);
+                    limparConsole();
+                    instrutor.excluirInstrutor(Conexao.getConexao());
                     break;
                 case 5:
-                limparConsole();
-                    AcademiaApp.buscarInstrutorPorId(conexao);
+                    limparConsole();
+                    instrutor.buscarInstrutorPorNome(Conexao.getConexao());
                     break;
                 case 6:
-                    return; // Voltar ao menu principal
+                    limparConsole();
+                    treino.cadastrarTreino(Conexao.getConexao());
+                    break;
+                case 7:
+                    limparConsole();
+                    treino.listarTreinos(Conexao.getConexao());
+                    break;
+                case 8:
+                    limparConsole();
+                    treino.editarTreino(Conexao.getConexao());
+                    break;
+                case 9:
+                    limparConsole();
+                    treino.excluirTreino(Conexao.getConexao());
+                    break;
+                case 10:
+                    limparConsole();
+                    treino.buscarTreinoPorNome(Conexao.getConexao());
+                    break;
+                case 0:
+                    return; // Voltar ao Menu Principal
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
             }
         }
     }
 
-   // Função para ler uma opção numérica do usuário
+    public static void menuTreino() {
+        // Cria um objeto Treino com valores iniciais vazios e um Scanner para entrada
+        Treino treino = new Treino(null, null, 0, null);
+        Scanner scanner = new Scanner(System.in);
 
-    private static int lerOpcao() {
-        int opcao;
-        do {
-            try {
-                opcao = scanner.nextInt(); // Lê um número inteiro da entrada padrão (teclado)
-                if (opcao < 1) {
-                    System.out.println("Opção deve ser maior ou igual a 1. Tente novamente.");
-                    // Se a opção for menor que 1, exibe uma mensagem de erro
-                }
-            } catch (java.util.InputMismatchException e) {
-                System.out.println("Opção inválida. Tente novamente.");
-                opcao = 0;
-                // Se a entrada não for um número inteiro válido, exibe uma mensagem de erro e define opcao como 0
-            } finally {
-                scanner.nextLine(); // Limpa o buffer de entrada
+        while (true) {
+            limparConsole();
+            System.out.println("\n      MENU TREINO");
+            System.out.println("-----------------------");
+            System.out.println("1. Cadastrar Treino");
+            System.out.println("2. Listar Treinos");
+            System.out.println("3. Editar Treino");
+            System.out.println("4. Excluir Treino");
+            System.out.println("5. Buscar Treino");
+            System.out.println("0. Voltar ao Menu Principal");
+            System.out.println("-----------------------");
+            System.out.print("Escolha uma opção: ");
+
+            int opcaoTreino = scanner.nextInt();
+            scanner.nextLine(); // Limpar o buffer
+
+            switch (opcaoTreino) {
+                case 1:
+                    limparConsole();
+                    treino.cadastrarTreino(Conexao.getConexao());
+                    break;
+                case 2:
+                    limparConsole();
+                    treino.listarTreinos(Conexao.getConexao());
+                    break;
+                case 3:
+                    limparConsole();
+                    treino.editarTreino(Conexao.getConexao());
+                    break;
+                case 4:
+                    limparConsole();
+                    treino.excluirTreino(Conexao.getConexao());
+                    break;
+                case 5:
+                    limparConsole();
+                    treino.buscarTreinoPorNome(Conexao.getConexao());
+                    break;
+                case 0:
+                    return; // Voltar ao Menu Principal
+                default:
+                    System.out.println("Opção inválida. Tente novamente.");
             }
-        } while (opcao < 1); // Continua solicitando até que uma opção válida (>= 1) seja fornecida
-        return opcao; // Retorna a opção válida
+        }
     }
-
-  // Método para limpar o console
 
     public static void limparConsole() {
         try {
             if (System.getProperty("os.name").contains("Windows")) {
-                // Verifica se o sistema operacional é Windows
                 new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-                // Executa o comando "cls" no prompt de comando do Windows para limpar o console.
             } else {
-                // Se não for Windows, assume-se que é um sistema Unix-like (Linux ou macOS).
                 new ProcessBuilder("clear").inheritIO().start().waitFor();
-                // Executa o comando "clear" em sistemas Unix-like para limpar o console.
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
